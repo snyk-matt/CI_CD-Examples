@@ -1,0 +1,23 @@
+trigger:
+- master
+
+resources:
+- repo: self
+
+# Build the Docker image and give it a name of your choosing
+steps:
+- script: |
+     docker build -t imageName .
+     docker images
+     docker images | grep imageName
+  displayName: 'build Docker image'
+
+# Start the Snyk Security task, passing thru the image name created above
+- task: SnykSecurityScan@0
+  inputs:
+    serviceConnectionEndpoint: 'SNYK_AUTH'
+    testType: 'container'
+    dockerImageName: imageName
+    dockerfilePath: 'Dockerfile'
+    monitorOnBuild: true
+    failOnIssues: false

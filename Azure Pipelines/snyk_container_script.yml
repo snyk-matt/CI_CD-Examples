@@ -1,0 +1,38 @@
+trigger:
+  - master
+
+pool:
+  vmImage: 'windows-2019'
+
+steps:
+# Node.js tool installer
+# Finds or downloads and caches the specified version spec of Node.js and adds it to the PATH
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
+    displayName: 'Install Node'
+
+# Install Snyk CLI via npm
+  - script: |
+      npm install -g snyk
+    displayName: 'install snyk'
+
+# Pass in your API key/service account token as a variable to authorize Snyk's CLI
+  - script: |
+      snyk auth $(snykAuth)
+    displayName: 'Snyk auth'
+    continueOnError: true
+
+# Build the Docker image and give it a name of your choosing
+  - script: |
+      docker build -t imageName .
+      docker images
+      docker images | grep imageName
+    displayName: 'build Docker image'
+
+# Test for container vulnerabilities with Snyk using the CLI
+# This acts as a pure security gate - fail if vulnerabilities, pass if none
+  - script: |
+      snyk container test imageName --file=Dockerfile
+    displayName: 'Snyk Container'
+    continueOnError: false 

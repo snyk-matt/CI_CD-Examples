@@ -1,0 +1,31 @@
+trigger:
+  - master
+
+pool:
+  vmImage: 'windows-2019'
+
+steps:
+# Node.js tool installer
+# Finds or downloads and caches the specified version spec of Node.js and adds it to the PATH
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
+    displayName: 'Install Node'
+
+# Install Snyk CLI via npm
+  - script: |
+      npm install -g snyk
+    displayName: 'install snyk'
+
+# Pass in your API key/service account token as a variable to authorize Snyk's CLI
+  - script: |
+      snyk auth $(snykAuth)
+    displayName: 'Snyk auth'
+    continueOnError: true
+
+# Test open source components with Snyk's CLI
+# This acts as a security gate - fail if vulnerabilities, pass if none
+  - script: |
+      snyk test
+    displayName: 'Snyk SCA'
+    continueOnError: false 

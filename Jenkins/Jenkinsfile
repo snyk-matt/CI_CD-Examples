@@ -1,0 +1,18 @@
+pipeline {
+   agent any
+
+   stages {
+      
+      stage('Install Dependencies') {
+        steps {
+            sh "source ${pyt_path}/activate && pip3 install -r requirements.txt && deactivate"
+        }
+    }
+      
+      stage('Snyk security') {
+          steps {
+              snykSecurity projectName: 'Jenkins Pipeline goof', snykInstallation: 'install-snyk', snykTokenId: 'snykAuth', failOnIssues: false, organization: 'pas-customer-solutions-thomson-reuters-saa-311', additionalArguments: '--command=${pyt_path}/python3'
+          }
+      }
+   }
+}

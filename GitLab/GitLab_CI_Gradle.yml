@@ -1,0 +1,18 @@
+dependencyScanning:
+  script:
+    # Setting up node in a gradle environment
+    - curl -sL https://deb.nodesource.com/setup_10.x | bash -
+    - apt-get install nodejs
+    # Install Snyk and snyk-to-html
+    - npm install -g snyk
+    - npm install snyk-to-html -g
+    # Run snyk auth, snyk monitor, snyk test to break build and output report
+    - snyk auth $SNYK_TOKEN
+    - snyk monitor --all-projects --remote-repo-url=Gradle_GitLab_CI_CD
+    - snyk test --all-projects --json | snyk-to-html -o snyk_results.html
+
+  #output results
+  artifacts:
+    when: always
+    paths:
+      - snyk_results.html
