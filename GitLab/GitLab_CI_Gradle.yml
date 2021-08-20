@@ -3,16 +3,20 @@ dependencyScanning:
     # Setting up node in a gradle environment
     - curl -sL https://deb.nodesource.com/setup_10.x | bash -
     - apt-get install nodejs
-    # Install Snyk and snyk-to-html
+    # Install Snyk
     - npm install -g snyk
-    - npm install snyk-to-html -g
+    # Install snyk-to-html to generate an html report within the GitLab repo
+    # - npm install snyk-to-html -g
     # Run snyk auth, snyk monitor, snyk test to break build and output report
     - snyk auth $SNYK_TOKEN
+    # Run snyk monitor to push results to Snyk UI and custom name the grouped project
     - snyk monitor --all-projects --remote-repo-url=Gradle_GitLab_CI_CD
-    - snyk test --all-projects --json | snyk-to-html -o snyk_results.html
+    # Run snyk test to fail the build if vulns are found
+    - snyk test --all-projects 
+    # Add --json | snyk-to-html -o snyk_results.html to above to generate html report
 
-  #output results
-  artifacts:
-    when: always
-    paths:
-      - snyk_results.html
+  # Save the snyk-to html report to artifacts
+  #artifacts:
+  #  when: always
+  #  paths:
+  #    - snyk_results.html

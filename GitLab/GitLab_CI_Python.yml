@@ -4,10 +4,20 @@ dependency_scanning:
     # Setting up node in a python environment
     - curl -sL https://deb.nodesource.com/setup_10.x | bash -
     - apt-get install nodejs
-    # Install Snyk and snyk-to-html
+    # Install Snyk
     - npm install -g snyk
-    - npm install snyk-to-html -g
+    # Install snyk-to-html to generate an html report within the GitLab repo
+    # - npm install snyk-to-html -g
     # Run snyk auth, snyk monitor, snyk test to break build and output report
     - snyk auth $SNYK_TOKEN
+    # Run snyk monitor to push results to Snyk UI and custom name the project
     - snyk monitor --project-name=python-goof_GitLab_CI/CD
+     # Run snyk test to fail the build if vulns are found
     - snyk test
+    # Add --json | snyk-to-html -o snyk_results.html to above to generate html report
+
+  # Save the snyk-to html report to artifacts
+  #artifacts:
+  #  when: always
+  #  paths: 
+  #    - snyk_results.html
