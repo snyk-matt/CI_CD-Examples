@@ -21,7 +21,7 @@ build:
     # Add --json | snyk-to-html -o snyk_results.html to above to generate html report
   
   # Save the snyk-to html report to artifacts
-  artifacts:
-    when: always
-    paths: 
-      - snyk_results.html
+  #artifacts:
+  #  when: always
+  #  paths: 
+  #    - snyk_results.html
